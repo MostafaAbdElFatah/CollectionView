@@ -35,51 +35,44 @@ class ViewController: UIViewController , UICollectionViewDataSource , UICollecti
         // Do any additional setup after loading the view, typically from a nib.
     }
     
-    @IBAction func SelectedCell_btnClicked(sender: UIButton) {
-        let mainStoryboard = UIStoryboard(name: "Main", bundle:NSBundle.mainBundle())
-        let secdViewCon:SecondConView  = mainStoryboard.instantiateViewControllerWithIdentifier("SecondConView") as! SecondConView
+    @IBAction func selectedCell_btnClicked(_ sender: UIButton) {
+        let mainStoryboard = UIStoryboard(name: "Main", bundle:Bundle.main)
+        let secdViewCon:SecondConView  = mainStoryboard.instantiateViewController(withIdentifier: "SecondConView") as! SecondConView
         for i in 0..<self.viewCellData.count{
             if (self.viewCellData[i]["selected"] as! Bool){
-                secdViewCon.selectedCell.append(self.viewCellData[i])
+                secdViewCon.selectedCell.append(self.viewCellData[i] as! [String : NSObject])
             }
         }
-        self.presentViewController(secdViewCon, animated: true, completion: nil)
+        self.present(secdViewCon, animated: true, completion: nil)
     }
     
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+   
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.viewCellData.count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell:CollViewCell = collectionView.dequeueReusableCellWithReuseIdentifier("CollViewCell", forIndexPath: indexPath) as! CollViewCell
+        let cell:CollViewCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollViewCell", for: indexPath) as! CollViewCell
         cell.label1.text =  self.viewCellData[indexPath.row]["name"]! as? String
         cell.label2.text =  self.viewCellData[indexPath.row]["age"]! as? String
         cell.imageCell.image = UIImage(named: self.viewCellData[indexPath.row]["image"] as! String)
         if self.selectedIndex.contains(indexPath.row){
-            cell.SelectionView.hidden = false
+            cell.SelectionView.isHidden = false
         }else{
-            cell.SelectionView.hidden = true
+            cell.SelectionView.isHidden = true
         }
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if self.selectedIndex.contains(indexPath.row) {
             self.viewCellData[indexPath.row]["selected"] = false
             //self.selectedIndex = self.selectedIndex.filter(){$0 != indexPath.row}
-            self.selectedIndex.removeAtIndex(self.selectedIndex.indexOf(indexPath.row)!)
+            self.selectedIndex.remove(at: self.selectedIndex.index(of:indexPath.row)!)
         }else{
             self.viewCellData[indexPath.row]["selected"] = true
             self.selectedIndex.append(indexPath.row)
